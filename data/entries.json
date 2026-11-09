@@ -1,0 +1,46 @@
+[
+  {
+    "title": "Summer 2027 add/drop",
+    "text": "For the standard Summer 2027 semester, classes and the add/drop period begin June 1, 2027. June 5, 2027 is the last day to add a class or drop it without an enrollment record.",
+    "source_ids": ["calendar"],
+    "section": "Summer 2027",
+    "term": "Summer 2027",
+    "keywords": ["add", "drop", "deadline", "registration"]
+  },
+  {
+    "title": "Summer 2027 withdrawal",
+    "text": "For the standard Summer 2027 semester, the course withdrawal period begins June 7, 2027 and ends July 3, 2027.",
+    "source_ids": ["calendar"],
+    "section": "Summer 2027",
+    "term": "Summer 2027",
+    "keywords": ["withdraw", "withdrawal", "deadline"]
+  },
+  {
+    "title": "Adding and dropping courses",
+    "text": "The catalog directs semester students to the Academic Calendar for the add/drop deadline. Adding a course depends on available space. The catalog has a separate policy for Pro+ programs.",
+    "source_ids": ["catalog", "calendar"],
+    "section": "Catalog p. 54, Adding and Dropping Courses",
+    "keywords": ["add", "drop", "registration"]
+  },
+  {
+    "title": "Academic Advising and Records",
+    "text": "SFBU's Contact Us page lists records@sfbu.edu for Academic Advising and the Records Office. It identifies Records as the contact for transcripts, diplomas, and education verification.",
+    "source_ids": ["contact"],
+    "section": "Academic Advising and Records Office",
+    "keywords": ["advising", "advisor", "records", "transcript", "diploma", "verification"]
+  },
+  {
+    "title": "IT Support",
+    "text": "SFBU lists AskIT@sfbu.edu for IT Support. Use the AskIT form to submit a support request.",
+    "source_ids": ["contact", "askit"],
+    "section": "IT Support Services",
+    "keywords": ["it support", "tech support", "technical support", "canvas", "password", "login", "wi-fi", "wifi", "askit"]
+  },
+  {
+    "title": "Student Accounts",
+    "text": "SFBU lists studentaccounts@sfbu.edu for the Finance Office and Student Accounts.",
+    "source_ids": ["contact", "resources"],
+    "section": "Finance Office and Student Accounts",
+    "keywords": ["student accounts", "finance", "billing", "bursar", "payment"]
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "sfbu": {"title": "SFBU Homepage", "url": "https://www.sfbu.edu/"},
+  "calendar": {"title": "Academic Calendar", "url": "https://www.sfbu.edu/learning-teaching/academic-calendar"},
+  "catalog": {"title": "University Catalog 2026–2027", "url": "https://www.sfbu.edu/learning-teaching/university-catalog"},
+  "handbook": {"title": "Student Handbook 2026–2027", "url": "https://www.sfbu.edu/sites/default/files/student-handbook-2026-2027.pdf"},
+  "askit": {"title": "AskIT Form", "url": "https://www.sfbu.edu/contact-us/askit-form"},
+  "resources": {"title": "SFBU Resources", "url": "https://www.sfbu.edu/student-life-support/sfbu-resources"},
+  "contact": {"title": "Contact Us", "url": "https://www.sfbu.edu/contact-us"}
+}
