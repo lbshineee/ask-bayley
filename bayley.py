@@ -15,11 +15,15 @@ def load_data():
     return sources, entries
 
 
-def find_entries(question, term, entries):
+def find_entries(question, entries):
     query = question.casefold()
-    requested_terms = re.findall(r"\b(?:spring|summer|fall|winter)\s+20\d{2}\b", query)
-    term_matches_question = not requested_terms or set(requested_terms) == {term.casefold()}
+    seasons = set(re.findall(r"\b(?:spring|summer|fall|winter)\b", query))
+    years = set(re.findall(r"\b20\d{2}\b", query))
+    term = None
+    if len(seasons) == len(years) == 1:
+        term = f"{next(iter(seasons))} {next(iter(years))}"
     standard_semester = not re.search(r"\bpro\s*\+|\b8[- ]week\b", query)
+    asks_for_date = bool(re.search(r"\b(?:when|deadline|date|what day)\b", query))
 
     def score(entry):
         return sum(
@@ -29,16 +33,25 @@ def find_entries(question, term, entries):
 
     dated = []
     general = []
+    has_calendar_match = False
     for entry in entries:
         if not score(entry):
             continue
-        if entry.get("term") == term and term_matches_question and standard_semester:
-            dated.append(entry)
-        elif "term" not in entry:
+        if "term" not in entry:
             general.append(entry)
+        elif standard_semester:
+            has_calendar_match = True
+            if entry["term"].casefold() == term:
+                dated.append(entry)
+
+    if asks_for_date and has_calendar_match and term is None:
+        return [], True
+    if asks_for_date and has_calendar_match and not dated:
+        return [], False
+
     ranked = sorted(dated, key=score, reverse=True)
     ranked.extend(sorted(general, key=score, reverse=True))
-    return ranked[:3]
+    return ranked[:3], False
 
 
 def draft_answer(question, entries):

@@ -13,7 +13,7 @@ python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
 
-Open [http://localhost:8501](http://localhost:8501). Choose **Summer 2027** and ask “What is the add/drop deadline?” For a term-independent question, try “Where do I get Canvas help?” Laptop preview works with the included source notes and does not require an API key.
+Open [http://localhost:8501](http://localhost:8501). Type “When do classes start in Spring 2027?” or “What is the Summer 2027 add/drop deadline?” and press Enter. For a term-independent question, try “Where do I get Canvas help?” Laptop preview works with the included source notes and does not require an API key.
 
 ## Put the starter in GitHub
 
@@ -59,5 +59,11 @@ After pushing changes from the laptop, run `git pull --ff-only` inside the DGX c
 ## Source data and scope
 
 - `data/sources.json` holds the seven public URLs reviewed by the project owner.
-- `data/entries.json` holds six starter notes. Check the dates and applicability against the linked pages before the demo. The Summer 2027 notes cover the standard semester.
-- Retrieval uses keyword matching. The sidebar lists reference links, including pages beyond the six starter notes. There is no automatic document ingestion or embedding index in this starter.
+- `data/entries.json` holds the starter notes. Check the dates and applicability against the linked pages before the demo. Calendar notes cover standard semesters.
+- Retrieval uses keyword matching. Include the term and year in questions about dates. The sidebar lists reference links, including pages beyond the starter notes. There is no automatic document ingestion or embedding index in this starter.
+
+## Minimal mascot chat update
+
+The home page has one question field and the original Bayley the Bayhawk image underneath. Submit a message to switch to a chat with Bayley as the assistant avatar. The transition happens on submission, not while typing. History lasts for the browser session; New conversation is in the sidebar. Each question is retrieved independently, so include the term/year again when relevant. This UI update does not expand the knowledge base or add document ingestion.
+
+To apply this archive to an existing checkout, merge its files into your laptop's ask-bayley folder, keeping your existing .git and .venv folders. The assets/bayley.png file is required. Review git diff, commit the updated files and push. On the DGX, stop Streamlit with Ctrl+C, run git pull --ff-only and restart with .venv/bin/python -m streamlit run app.py. Configure the API key in that terminal for model drafting, as described above. No API keys are included in this archive.

@@ -1,11 +1,19 @@
 [
   {
+    "title": "Spring 2027 class start",
+    "text": "For the standard Spring 2027 semester, classes begin Monday, January 11, 2027.",
+    "source_ids": ["calendar"],
+    "section": "Spring 2027",
+    "term": "Spring 2027",
+    "keywords": ["start", "starts", "begin", "begins", "first day"]
+  },
+  {
     "title": "Summer 2027 add/drop",
     "text": "For the standard Summer 2027 semester, classes and the add/drop period begin June 1, 2027. June 5, 2027 is the last day to add a class or drop it without an enrollment record.",
     "source_ids": ["calendar"],
     "section": "Summer 2027",
     "term": "Summer 2027",
-    "keywords": ["add", "drop", "deadline", "registration"]
+    "keywords": ["add", "drop", "deadline", "registration", "start", "starts", "begin", "begins", "first day"]
   },
   {
     "title": "Summer 2027 withdrawal",
