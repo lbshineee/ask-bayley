@@ -67,6 +67,10 @@ def resolve_context(question,context):
     ctx=dict(context); q=question.lower()
     seasons=re.findall(r'\b(spring|summer|fall|winter)\b',q); years=re.findall(r'\b20\d{2}\b',q)
     if len(set(seasons))>1 or len(set(years))>1: return question,ctx,'Please ask about one term and year at a time.'
+    explicit_program=bool(re.search(r'pro\s*\+|8[- ]week|standard',q))
+    new_term=(seasons and seasons[0]!=ctx.get('season')) or (years and years[0]!=ctx.get('year'))
+    if new_term and not explicit_program and not ctx.get('pending_question'):
+        ctx.pop('program',None)
     if seasons:
         if ctx.get('season')!=seasons[0] and not years: ctx.pop('year',None)
         ctx['season']=seasons[0]
@@ -230,7 +234,24 @@ def no_evidence_reply(question,history):
     return 'I don’t have verified SFBU information for that yet. '+text
 
 
+def early_response(question):
+    """Fast, conservative checks for explicit requests. Not a complete safety classifier."""
+    q=question.casefold().strip(' .!?')
+    if re.search(r'\b(make|build|construct|assemble)\b.{0,50}\b(bomb|explosive device)\b',q) and not re.search(r'\b(prevent|report|found|suspect|avoid)\b',q):
+        return 'I can’t help with instructions for making explosives. I can help with safe chemistry projects or general laboratory safety.', 'Safety boundary'
+    if re.search(r'\b(invent|fabricate|make up)\b.{0,60}\b(deadline|policy|enrollment|date|citation)\b',q):
+        return 'I won’t invent school dates, policies, or citations. Tell me the real question and I’ll check the available official information.', 'Evidence integrity boundary'
+    if re.search(r'\b(what|which)\b.{0,30}\b(model|llm)\b',q) and re.search(r'\b(you|your|using|use|running)\b',q):
+        model=os.environ.get('BAYLEY_MODEL','qwen3:8b')
+        state='An API key is configured; check a reply’s production details for successful model use.' if os.environ.get('BAYLEY_WEBUI_API_KEY') else 'No API key is configured, so this session uses source-note fallbacks.'
+        return f'I’m Ask Bayley. My configured chat model is {model}, accessed through Open WebUI. '+state, 'Application configuration · no model request'
+    return None
+
+
 def answer_question(question,entries,context,semantic=True,history=None):
+    early=early_response(question)
+    if early:
+        return {'role':'assistant','question':question,'text':early[0],'mode':early[1],'context':dict(context),'entries':[],'paragraphs':[],'status':'conversation'}
     kind=conversational_kind(question)
     ctx=dict(context)
     response={'role':'assistant','question':question,'entries':[],'context':ctx,'paragraphs':[],
@@ -252,6 +273,18 @@ def answer_question(question,entries,context,semantic=True,history=None):
         query_input=ctx['last_question']+' Follow-up: '+question
     query,ctx,clarify=resolve_context(query_input,ctx)
     response['context']=ctx
+    calendar=bool(re.search(r'\b(start|starts|begin|begins|drop|add|withdraw|withdrawal|deadline|exams?|finals?|end|ends|registration)\b',question.lower())) or bool(context.get('pending_question'))
+    response['show_calendar_context']=calendar
+    if calendar:
+        term=(ctx.get('season','')+' '+ctx.get('year','')).strip().title()
+        available=[e for e in entries if e.get('topic')=='calendar' and e.get('term')==term]
+        missing_term=ctx.get('season') and ctx.get('year') and not available
+        unsupported_program=ctx.get('program') and not any(e.get('program')==ctx['program'] for e in available)
+        if missing_term or (ctx.get('season') and ctx.get('year') and unsupported_program):
+            scope=term+(' · '+ctx['program'] if ctx.get('program') else '')
+            ctx.pop('pending_question',None)
+            response.update(text=f'I don’t have verified calendar dates for {scope}. Please check SFBU’s official Academic Calendar or contact Academic Records. I won’t substitute dates from another term or program.',status='missing_calendar',mode='Coverage check · no model request',action_source='calendar')
+            return response
     if clarify:response.update(text=clarify,mode='Clarification');return response
     matches,clashes,mode,warning=retrieve(query,entries,ctx,semantic)
     response.update(mode=mode,diagnostic=warning)
@@ -259,9 +292,7 @@ def answer_question(question,entries,context,semantic=True,history=None):
         response.update(text='The available sources disagree on this point. Please confirm with the responsible office before relying on either version.',entries=clashes,status='conflict'); return response
     if not matches:
         response.update(text='I don’t have verified SFBU information for that question yet. Could you clarify the service or topic you need help with?',status='missing')
-        if os.environ.get('BAYLEY_WEBUI_API_KEY'):
-            try:response['text']=no_evidence_reply(question,history);response['mode']+=' · model clarification'
-            except Exception as exc:response['diagnostic']=type(exc).__name__
+        response['mode']+=' · no supporting evidence'
         return response
     response.update(text='Here’s what I found in the SFBU sources:',entries=matches,status='answered')
     if os.environ.get('BAYLEY_WEBUI_API_KEY'):

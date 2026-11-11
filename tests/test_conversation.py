@@ -23,7 +23,7 @@ class ConversationTests(unittest.TestCase):
  def test_missing_evidence(self):
   with patch.dict(os.environ,{'BAYLEY_WEBUI_API_KEY':'test'}),patch('bayley.completion',return_value={'clarification':'Which facility do you mean?'}) as call:
    r=bayley.answer_question('Where is the swimming pool?',self.entries,{},False)
-   self.assertEqual(r['status'],'missing');self.assertIn('Which facility',r['text']);call.assert_called_once()
+   self.assertEqual(r['status'],'missing');self.assertIn('clarify',r['text']);call.assert_not_called()
  def test_invalid_reply_fallback(self):
   with patch.dict(os.environ,{'BAYLEY_WEBUI_API_KEY':'test'}),patch('bayley.completion',return_value=self.payload('Call invented@invalid.example.')):
    r=bayley.answer_question('Who is president?',self.entries,{},False)

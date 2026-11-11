@@ -228,7 +228,7 @@
   {
     "id": "hours",
     "title": "General service hours",
-    "text": "General service hours: Monday\u2013Friday, 9:00 a.m.\u20135:30 p.m. Weekend service is closed.",
+    "text": "General service hours: Monday–Friday, 9:00 a.m.–5:30 p.m. Weekend service is closed.",
     "keywords": [
       "service hours",
       "office hours",
@@ -245,7 +245,7 @@
     "effective_from": null,
     "effective_to": null,
     "fact_key": "hours",
-    "fact_value": "General service hours: Monday\u2013Friday, 9:00 a.m.\u20135:30 p.m. Weekend service is closed."
+    "fact_value": "General service hours: Monday–Friday, 9:00 a.m.–5:30 p.m. Weekend service is closed."
   },
   {
     "id": "clubs",
@@ -463,7 +463,7 @@
   {
     "id": "spring-2027-finals",
     "title": "Spring 2027 finals",
-    "text": "Spring 2027: final examinations are May 3\u20138, 2027.",
+    "text": "Spring 2027: final examinations are May 3–8, 2027.",
     "keywords": [
       "exam",
       "exams",
@@ -482,7 +482,7 @@
     "effective_from": null,
     "effective_to": null,
     "fact_key": "finals",
-    "fact_value": "Spring 2027: final examinations are May 3\u20138, 2027.",
+    "fact_value": "Spring 2027: final examinations are May 3–8, 2027.",
     "topic": "calendar"
   },
   {
@@ -581,7 +581,7 @@
   {
     "id": "summer-2027-finals",
     "title": "Summer 2027 finals",
-    "text": "Summer 2027: final examinations are July 19\u201324, 2027.",
+    "text": "Summer 2027: final examinations are July 19–24, 2027.",
     "keywords": [
       "exam",
       "exams",
@@ -600,7 +600,7 @@
     "effective_from": null,
     "effective_to": null,
     "fact_key": "finals",
-    "fact_value": "Summer 2027: final examinations are July 19\u201324, 2027.",
+    "fact_value": "Summer 2027: final examinations are July 19–24, 2027.",
     "topic": "calendar"
   },
   {
@@ -625,5 +625,298 @@
     "fact_key": "end",
     "fact_value": "Summer 2027: semester ends July 28, 2027.",
     "topic": "calendar"
+  },
+  {
+    "id": "ece-faculty",
+    "title": "Engineering faculty directory",
+    "text": "SFBU’s Electrical and Computer Engineering faculty page lists Shak Hossain, Ahmed Banafa, Satarupa Mukherjee, Jesse Ramirez, Robin Yancey, Samane Abdi, Nizar Albassam, Evelyn Binoya, Yasin Ceran, Ken Cheung, Pragati Dharmale, and Andrei Grigoriev among its faculty and teaching-support listings. This is a selected snapshot, not a complete roster or current course assignment list.",
+    "keywords": [
+      "engineering faculty",
+      "ece faculty",
+      "engineering professors",
+      "engineering department"
+    ],
+    "source_ids": [
+      "ece"
+    ],
+    "section": "Faculty listings",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "ece-faculty",
+    "fact_value": "SFBU’s Electrical and Computer Engineering faculty page lists Shak Hossain, Ahmed Banafa, Satarupa Mukherjee, Jesse Ramirez, Robin Yancey, Samane Abdi, Nizar Albassam, Evelyn Binoya, Yasin Ceran, Ken Cheung, Pragati Dharmale, and Andrei Grigoriev among its faculty and teaching-support listings. This is a selected snapshot, not a complete roster or current course assignment list."
+  },
+  {
+    "id": "ece-chair",
+    "title": "Shak Hossain",
+    "text": "SFBU lists Shak Hossain as Professor and Chair of Electrical and Computer Engineering.",
+    "keywords": [
+      "shak",
+      "hossain",
+      "engineering chair",
+      "head of engineering"
+    ],
+    "source_ids": [
+      "ece"
+    ],
+    "section": "Shak Hossain",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "ece-chair",
+    "fact_value": "SFBU lists Shak Hossain as Professor and Chair of Electrical and Computer Engineering."
+  },
+  {
+    "id": "ece-ai",
+    "title": "Satarupa Mukherjee",
+    "text": "SFBU describes Satarupa Mukherjee as a Professor of Practice in Electrical and Computer Engineering, specializing in artificial intelligence and machine learning, including generative AI and large language models.",
+    "keywords": [
+      "satarupa",
+      "mukherjee",
+      "generative ai faculty",
+      "machine learning professor"
+    ],
+    "source_ids": [
+      "ece"
+    ],
+    "section": "Satarupa Mukherjee",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "ece-ai",
+    "fact_value": "SFBU describes Satarupa Mukherjee as a Professor of Practice in Electrical and Computer Engineering, specializing in artificial intelligence and machine learning, including generative AI and large language models."
+  },
+  {
+    "id": "ece-security",
+    "title": "Samane Abdi",
+    "text": "SFBU’s faculty page describes Samane Abdi as specializing in cybersecurity and networks, with teaching in threat intelligence, cloud security, and applied AI.",
+    "keywords": [
+      "samane",
+      "abdi",
+      "cybersecurity faculty",
+      "cloud security professor"
+    ],
+    "source_ids": [
+      "ece"
+    ],
+    "section": "Samane Abdi",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "ece-security",
+    "fact_value": "SFBU’s faculty page describes Samane Abdi as specializing in cybersecurity and networks, with teaching in threat intelligence, cloud security, and applied AI."
+  },
+  {
+    "id": "business-faculty",
+    "title": "Business faculty directory",
+    "text": "SFBU’s Business Faculty page lists Johnathan Mun, Cassondra Smith, Pepe Adriazola, Michael Aquilina, Jumana Jay Black, Flora Chu, Reginald Duhé, Gary Giss, Nicole Goldberg, and Shalini Gopalkrishnan among its faculty listings. This is a selected snapshot, not a complete roster or current course assignment list.",
+    "keywords": [
+      "business faculty",
+      "business professors",
+      "business department"
+    ],
+    "source_ids": [
+      "business"
+    ],
+    "section": "Faculty listings",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "business-faculty",
+    "fact_value": "SFBU’s Business Faculty page lists Johnathan Mun, Cassondra Smith, Pepe Adriazola, Michael Aquilina, Jumana Jay Black, Flora Chu, Reginald Duhé, Gary Giss, Nicole Goldberg, and Shalini Gopalkrishnan among its faculty listings. This is a selected snapshot, not a complete roster or current course assignment list."
+  },
+  {
+    "id": "business-chair",
+    "title": "Johnathan Mun",
+    "text": "SFBU lists Johnathan Mun as Professor and Chair of Business. His stated research interests include financial analytics, quantitative methods, data science, and investment science.",
+    "keywords": [
+      "johnathan",
+      "mun",
+      "business chair",
+      "head of business"
+    ],
+    "source_ids": [
+      "business"
+    ],
+    "section": "Johnathan Mun",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "business-chair",
+    "fact_value": "SFBU lists Johnathan Mun as Professor and Chair of Business. His stated research interests include financial analytics, quantitative methods, data science, and investment science."
+  },
+  {
+    "id": "business-smith",
+    "title": "Cassondra Smith",
+    "text": "SFBU lists Cassondra Smith as Professor of Business, Postdoctoral. Her listed expertise includes supply chain management, consumer behavior, and cost accounting.",
+    "keywords": [
+      "cassondra",
+      "smith",
+      "supply chain professor"
+    ],
+    "source_ids": [
+      "business"
+    ],
+    "section": "Cassondra Smith",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "business-smith",
+    "fact_value": "SFBU lists Cassondra Smith as Professor of Business, Postdoctoral. Her listed expertise includes supply chain management, consumer behavior, and cost accounting."
+  },
+  {
+    "id": "math-support",
+    "title": "Math Student Support",
+    "text": "SFBU’s Resources page lists evelyn.binoya@sfbu.edu as the contact for Math Student Support.",
+    "keywords": [
+      "math help",
+      "math tutoring",
+      "mathematics support"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Math Student Support",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "math-support",
+    "fact_value": "SFBU’s Resources page lists evelyn.binoya@sfbu.edu as the contact for Math Student Support.",
+    "contact_email": "evelyn.binoya@sfbu.edu"
+  },
+  {
+    "id": "english-support",
+    "title": "English Student Support",
+    "text": "SFBU’s Resources page lists leslie.ji@sfbu.edu as the contact for English Student Support.",
+    "keywords": [
+      "english help",
+      "writing support",
+      "english tutoring"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "English Student Support",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "english-support",
+    "fact_value": "SFBU’s Resources page lists leslie.ji@sfbu.edu as the contact for English Student Support.",
+    "contact_email": "leslie.ji@sfbu.edu"
+  },
+  {
+    "id": "graduate-success",
+    "title": "Graduate Success Counselor",
+    "text": "SFBU’s Resources page lists ermelindo.hernandez@sfbu.edu as the contact for Graduate Success Counselor.",
+    "keywords": [
+      "graduate success",
+      "graduate counselor"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Graduate Success Counselor",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "graduate-success",
+    "fact_value": "SFBU’s Resources page lists ermelindo.hernandez@sfbu.edu as the contact for Graduate Success Counselor.",
+    "contact_email": "ermelindo.hernandez@sfbu.edu"
+  },
+  {
+    "id": "undergraduate-success",
+    "title": "Undergraduate Success Counselor",
+    "text": "SFBU’s Resources page lists rebecca.jimenez@sfbu.edu as the contact for Undergraduate Success Counselor.",
+    "keywords": [
+      "undergraduate success",
+      "undergraduate counselor"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Undergraduate Success Counselor",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "undergraduate-success",
+    "fact_value": "SFBU’s Resources page lists rebecca.jimenez@sfbu.edu as the contact for Undergraduate Success Counselor.",
+    "contact_email": "rebecca.jimenez@sfbu.edu"
+  },
+  {
+    "id": "residential-life",
+    "title": "Residential Life",
+    "text": "SFBU’s Resources page lists residentiallife@sfbu.edu as the contact for Residential Life.",
+    "keywords": [
+      "residential life",
+      "roommate conflict"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Residential Life",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "residential-life",
+    "fact_value": "SFBU’s Resources page lists residentiallife@sfbu.edu as the contact for Residential Life.",
+    "contact_email": "residentiallife@sfbu.edu"
+  },
+  {
+    "id": "nonacademic-complaints",
+    "title": "Non-Academic Complaints",
+    "text": "SFBU’s Resources page lists compliance@sfbu.edu as the contact for Non-Academic Complaints.",
+    "keywords": [
+      "non academic complaint",
+      "non-academic complaint"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Non-Academic Complaints",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "nonacademic-complaints",
+    "fact_value": "SFBU’s Resources page lists compliance@sfbu.edu as the contact for Non-Academic Complaints.",
+    "contact_email": "compliance@sfbu.edu"
   }
 ]

@@ -47,7 +47,7 @@ with st.sidebar:
     st.subheader('Sources')
     for source in sources.values():
         st.markdown(f"[{source['title']}]({source['url']})")
-    st.caption('A source link is not proof that the full document is indexed. This version uses 26 reviewed notes.')
+    st.caption(f'A source link is not proof that the full document is indexed. This version uses {len(entries)} reviewed notes.')
     with st.expander('Connection and retrieval'):
         st.caption('Model: '+os.environ.get('BAYLEY_MODEL','qwen3:8b'))
         st.caption('API key configured' if os.environ.get('BAYLEY_WEBUI_API_KEY') else 'No API key · source notes only')
@@ -69,14 +69,14 @@ def render_reply(message,index):
                 links=[]
                 for eid in paragraph['evidence_ids']:
                     source=sources[by_id[eid]['source_ids'][0]]
-                    links.append(f"[Evidence {numbers[eid]}]({source['url']})")
+                    links.append(f"[{source['title']} · {numbers[eid]}]({source['url']})")
                 st.markdown(paragraph['text']+'  '+ ' · '.join(links))
         else:
             st.markdown(message['text'])
             for n,e in enumerate(evidence,1):
                 source=sources[e['source_ids'][0]]
-                st.markdown(f"{e['text']} **[Evidence {n}]({source['url']})**")
-        if message.get('context',{}).get('season'):
+                st.markdown(f"{e['text']} **[{source['title']} · {n}]({source['url']})**")
+        if message.get('show_calendar_context') and message.get('context',{}).get('season'):
             ctx=message['context']; st.caption('Conversation context: '+ctx.get('season','').title()+' '+ctx.get('year','')+' · '+ctx.get('program','program not specified'))
         if message.get('entries'):
             with st.expander('Evidence and applicability'):
@@ -86,6 +86,9 @@ def render_reply(message,index):
                     st.caption(f"Section: {e['section']} · Owner: {e['source_owner']} · Checked: {e['checked_on']}")
                     st.caption(f"Scope: {e.get('term') or 'No term specified'} · {e['program']} · Effective: {e.get('effective_from') or 'Not stated'} to {e.get('effective_to') or 'Not stated'}")
                     for sid in e['source_ids']: st.markdown(f"[{sources[sid]['title']}]({sources[sid]['url']})")
+        if message.get('action_source'):
+            source=sources[message['action_source']]
+            st.link_button(source['title'],source['url'])
         if message.get('status') in ['missing','conflict']:
             st.link_button('Find the right SFBU office',sources['contact']['url'])
         contacts=[e for e in message.get('entries',[]) if e.get('contact_email')]
@@ -121,8 +124,7 @@ if not st.session_state.messages:
 else:
     st.markdown('<div class="bayley-chat-title">Ask Bayley</div>',unsafe_allow_html=True)
     st.caption('Your SFBU student guide')
-    follow_latest=st.checkbox('Follow new replies',value=True,help='Turn off to read earlier messages without automatic scrolling.')
-    with st.container(height=480,border=False,key='conversation',autoscroll=follow_latest):
+    with st.container(height=480,border=False,key='conversation',autoscroll=True):
         for i,message in enumerate(st.session_state.messages):
             if message['role']=='user':
                 with st.chat_message('user'): st.write(message['text'])

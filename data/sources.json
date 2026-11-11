@@ -12,13 +12,13 @@
     "owner": "SFBU"
   },
   "catalog": {
-    "title": "University Catalog 2026\u20132027",
+    "title": "University Catalog 2026–2027",
     "url": "https://www.sfbu.edu/learning-teaching/university-catalog",
     "checked_on": null,
     "owner": "SFBU"
   },
   "handbook": {
-    "title": "Student Handbook 2026\u20132027",
+    "title": "Student Handbook 2026–2027",
     "url": "https://www.sfbu.edu/sites/default/files/student-handbook-2026-2027.pdf",
     "checked_on": null,
     "owner": "SFBU"
@@ -44,6 +44,18 @@
   "leadership": {
     "title": "Our Leadership",
     "url": "https://www.sfbu.edu/about/our-leadership",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  },
+  "ece": {
+    "title": "Electrical and Computer Engineering Faculty",
+    "url": "https://www.sfbu.edu/learning-teaching/faculty/ece",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  },
+  "business": {
+    "title": "Business Faculty",
+    "url": "https://www.sfbu.edu/learning-teaching/faculty/business",
     "checked_on": "2026-11-11",
     "owner": "SFBU"
   }
