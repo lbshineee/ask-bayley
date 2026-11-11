@@ -21,17 +21,14 @@ header[data-testid="stHeader"] { background: transparent; }
 .bayley-chat-title { color:#0c4266; font-size:24px; font-weight:650; margin-bottom:2px; }
 [data-testid="stChatInput"] { border-radius: 28px; border:1px solid #dce2e6; background:white; box-shadow:0 3px 14px #143a5810; }
 [data-testid="stChatMessage"] { background:#f7f9fb; border-radius:18px; animation:arrive .25s ease-out; }
-[data-testid="stChatMessageAvatarCustom"] { object-fit:cover; object-position:50% 10%; background:white; border-radius:50%; }
-[data-testid="stChatMessage"] img[data-testid="stChatMessageAvatarCustom"] { width:44px; height:44px; object-fit:cover; object-position:center top; }
-[data-testid="stChatMessage"]:has(.bayley-avatar) [data-testid="stChatMessageAvatarCustom"] { display:none; }
-.bayley-avatar { width:44px; height:44px; overflow:hidden; border-radius:50%; background:#edf3f6; }
-.bayley-avatar img { width:132px; max-width:none; transform:translate(-44px,-3px); }
 @keyframes arrive { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
 </style>''', unsafe_allow_html=True)
 
 sources, entries = load_data()
 encoded=base64.b64encode(MASCOT.read_bytes()).decode('ascii')
+# Frame the original PNG with an SVG viewport; the source mascot is unchanged.
+portrait=f'<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="680 0 600 600"><rect x="680" width="600" height="600" fill="#edf3f6"/><image href="data:image/png;base64,{encoded}" width="2048" height="1763"/></svg>' 
 for key,default in [('messages',[]),('context',{}),('feedback',{})]:
     if key not in st.session_state: st.session_state[key]=default
 
@@ -59,17 +56,26 @@ with st.sidebar:
     st.caption('Student-built prototype. Feedback stays in this browser session; it is not sent to an analytics service.')
 
 # Keep this control visible even with the sidebar closed.
-_,control=st.columns([4,1])
+_,control=st.columns([3,2])
 with control: st.button('New conversation',on_click=reset,use_container_width=True)
 
 def render_reply(message,index):
-    # CSS crops the displayed original image to the face/shoulders; source PNG is unchanged.
-    with st.chat_message('assistant',avatar=str(MASCOT)):
-        st.markdown(f'<div class="bayley-avatar"><img src="data:image/png;base64,{encoded}" alt="Bayley the Bayhawk"></div>',unsafe_allow_html=True)
-        st.markdown(message['text'])
-        for n,e in enumerate(message.get('entries',[]),1):
-            source=sources[e['source_ids'][0]]
-            st.markdown(f"{e['text']} **[Evidence {n}]({source['url']})**")
+    with st.chat_message('assistant',avatar=portrait):
+        evidence=message.get('entries',[])
+        numbers={e['id']:n for n,e in enumerate(evidence,1)}
+        if message.get('paragraphs'):
+            by_id={e['id']:e for e in evidence}
+            for paragraph in message['paragraphs']:
+                links=[]
+                for eid in paragraph['evidence_ids']:
+                    source=sources[by_id[eid]['source_ids'][0]]
+                    links.append(f"[Evidence {numbers[eid]}]({source['url']})")
+                st.markdown(paragraph['text']+'  '+ ' · '.join(links))
+        else:
+            st.markdown(message['text'])
+            for n,e in enumerate(evidence,1):
+                source=sources[e['source_ids'][0]]
+                st.markdown(f"{e['text']} **[Evidence {n}]({source['url']})**")
         if message.get('context',{}).get('season'):
             ctx=message['context']; st.caption('Conversation context: '+ctx.get('season','').title()+' '+ctx.get('year','')+' · '+ctx.get('program','program not specified'))
         if message.get('entries'):
@@ -115,16 +121,18 @@ if not st.session_state.messages:
 else:
     st.markdown('<div class="bayley-chat-title">Ask Bayley</div>',unsafe_allow_html=True)
     st.caption('Your SFBU student guide')
-    for i,message in enumerate(st.session_state.messages):
-        if message['role']=='user':
-            with st.chat_message('user'): st.write(message['text'])
-        else: render_reply(message,i)
+    follow_latest=st.checkbox('Follow new replies',value=True,help='Turn off to read earlier messages without automatic scrolling.')
+    with st.container(height=480,border=False,key='conversation',autoscroll=follow_latest):
+        for i,message in enumerate(st.session_state.messages):
+            if message['role']=='user':
+                with st.chat_message('user'): st.write(message['text'])
+            else: render_reply(message,i)
     question=st.chat_input('Message Bayley…',key='chat_question',max_chars=1000)
 if question and question.strip(): submit(question.strip())
 if st.session_state.get('pending'):
     q=st.session_state.pop('pending')
     with st.spinner('Checking the available SFBU evidence…'):
-        reply=answer_question(q,entries,st.session_state.context,semantic)
+        reply=answer_question(q,entries,st.session_state.context,semantic,history=st.session_state.messages[:-1])
     st.session_state.context=reply['context']
     st.session_state.messages.append(reply)
     st.rerun()

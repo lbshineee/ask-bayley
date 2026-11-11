@@ -141,31 +141,138 @@ def validate_claims(result,entries):
         if e not in validated: validated.append(e)
     return validated
 
-def draft_answer(question,entries):
-    result=api('/api/chat/completions',{'model':os.environ.get('BAYLEY_MODEL','qwen3:8b'),'messages':[{'role':'system','content':(ROOT/'prompts/guide.txt').read_text()},{'role':'user','content':json.dumps({'question':question,'evidence':[{'id':e['id'],'text':e['text'],'term':e.get('term'),'program':e['program']} for e in entries]})+'\n/no_think'}],'temperature':0,'stream':False,'max_tokens':1400})
+def completion(messages):
+    result=api('/api/chat/completions',{'model':os.environ.get('BAYLEY_MODEL','qwen3:8b'),
+        'messages':messages,'temperature':0,'stream':False,'max_tokens':1800})
     choice=result['choices'][0]
     if choice.get('finish_reason')=='length': raise ValueError('Truncated answer')
-    content=choice['message']['content'].strip()
+    content=choice['message'].get('content')
+    if not isinstance(content,str) or not content.strip(): raise ValueError('Empty answer')
+    content=re.sub(r'<think>.*?</think>','',content,flags=re.S).strip()
     if content.startswith('```'): content=re.sub(r'^```(?:json)?\s*|\s*```$','',content)
-    return validate_claims(json.loads(content),entries)
+    value=json.loads(content)
+    if not isinstance(value,dict): raise ValueError('Expected JSON object')
+    return value
 
-def answer_question(question,entries,context,semantic=True):
-    query,ctx,clarify=resolve_context(question,context)
-    response={'role':'assistant','question':question,'entries':[],'context':ctx,'mode':'Clarification','text':clarify or ''}
-    if clarify: return response
+
+def bounded_history(history):
+    # Previous assistant text is conversation context, not a source of policy facts.
+    return [{'role':m['role'],'text':m.get('text','')[:1200]}
+        for m in (history or [])[-6:] if m.get('role') in ('user','assistant')]
+
+
+def validate_answer(result,entries):
+    paragraphs=result.get('paragraphs')
+    if not isinstance(paragraphs,list) or len(paragraphs)>4: raise ValueError('Invalid paragraphs')
+    by_id={e['id']:e for e in entries}; used=[]; output=[]
+    for item in paragraphs:
+        text=item.get('text'); refs=item.get('evidence',[])
+        if not isinstance(text,str) or not text.strip() or len(text)>1200 or not refs: raise ValueError('Missing text or evidence')
+        cited=[]
+        for ref in refs:
+            e=by_id.get(ref.get('id')); quote=ref.get('quote','')
+            if not e or not isinstance(quote,str) or len(quote.strip())<10 or quote not in e['text']: raise ValueError('Invalid citation')
+            if e not in cited: cited.append(e)
+            if e not in used: used.append(e)
+        support=' '.join(e['text'] for e in cited).casefold()
+        # Reject changed numbers, invented email addresses and all model-authored links.
+        for number in re.findall(r'\b\d+\b',text):
+            if number not in re.findall(r'\b\d+\b',support): raise ValueError('Unsupported number')
+        for email in re.findall(r'[\w.+-]+@[\w.-]+\.[a-zA-Z]+',text):
+            if email.casefold() not in support: raise ValueError('Unsupported contact')
+        if re.search(r'https?://|www\.|\]\(',text,re.I): raise ValueError('Use application source links')
+        output.append({'text':text.strip(),'evidence_ids':[e['id'] for e in cited]})
+    return {'paragraphs':output,'entries':used}
+
+
+def draft_answer(question,entries,history=None):
+    data={'question':question,'conversation_context':bounded_history(history),
+        'evidence':[{'id':e['id'],'text':e['text'],'term':e.get('term'),'program':e['program']} for e in entries]}
+    result=completion([{'role':'system','content':(ROOT/'prompts/guide.txt').read_text()},
+        {'role':'user','content':json.dumps(data)+'\n/no_think'}])
+    return validate_answer(result,entries)
+
+
+IDENTITY = "Hi! I’m Bayley, your SFBU student guide. I can help you find school information, understand published deadlines, and prepare a request for the right office. I’m a student-built AI prototype, and I’ll tell you when I don’t have enough information. What can I help you with?"
+
+
+def conversational_kind(question):
+    q=question.lower().strip(' .!?')
+    q=re.sub(r'^(hi|hello|hey)[,! ]+','',q)
+    if q in ['hi','hello','hey','who are you','what are you','what can you do','introduce yourself','what is your name',"what’s your name","what's your name"]: return 'identity'
+    if q in ['thanks','thank you','thank you bayley']: return 'thanks'
+    # Narrow general-help scope; school-specific information still requires evidence.
+    if not re.search(r'\b(sfbu|policy|deadline|calendar|professor|tuition|visa|cpt|opt)\b',q) and re.search(r'study (plan|tips|better)|manage my time|time management|procrastinat|prepare for (an? )?exam',q): return 'general'
+    return 'school'
+
+
+def general_reply(question,history):
+    result=completion([{'role':'system','content':
+        'You are Bayley, a warm SFBU student-guide prototype. Give brief general study/time-management suggestions. '
+        'Do not claim school-specific policies, dates, staff, services, or actions. Do not invent personal circumstances. '
+        'Label the advice as general, not SFBU policy. Ask a focused question if needed. '
+        'Return only JSON {"answer":"your response"}. No links, contact addresses or claims that you sent or scheduled anything.'},
+        {'role':'user','content':json.dumps({'question':question,'context':bounded_history(history)})+'\n/no_think'}])
+    text=result.get('answer')
+    if not isinstance(text,str) or not text.strip() or len(text)>2200 or re.search(r'https?://|[\w.+-]+@[\w.-]+',text): raise ValueError('Invalid general answer')
+    return text.strip()
+
+
+def no_evidence_reply(question,history):
+    result=completion([{'role':'system','content':
+        'You are Bayley. No verified evidence was found for the student question. '
+        'Ask ONE short clarifying question that helps identify the topic, service or program. '
+        'Do not answer the factual question, suggest facts, name departments, or invent dates/contacts. '
+        'Return only JSON {"clarification":"one question?"}. Maximum 220 characters.'},
+        {'role':'user','content':json.dumps({'question':question,'context':bounded_history(history)})+'\n/no_think'}])
+    text=result.get('clarification','')
+    if not isinstance(text,str) or not text.endswith('?') or len(text)>220 or text.count('?')!=1 or re.search(r'\d|https?://|@|\n',text): raise ValueError('Invalid clarification')
+    return 'I don’t have verified SFBU information for that yet. '+text
+
+
+def answer_question(question,entries,context,semantic=True,history=None):
+    kind=conversational_kind(question)
+    ctx=dict(context)
+    response={'role':'assistant','question':question,'entries':[],'context':ctx,'paragraphs':[],
+        'mode':'Configured identity','text':'','status':'conversation'}
+    if kind=='identity': response['text']=IDENTITY; return response
+    if kind=='thanks': response['text']='You’re welcome! What else can I help you find?'; return response
+    if kind=='general':
+        response.update(text='General study guidance: choose one manageable task, set a short focused work session, and review what you learned. What subject are you working on?',mode='General guidance · built-in fallback')
+        if os.environ.get('BAYLEY_WEBUI_API_KEY'):
+            try:
+                response['text']=general_reply(question,history);response['mode']='General guidance · '+os.environ.get('BAYLEY_MODEL','qwen3:8b')
+            except Exception as exc:response['diagnostic']=type(exc).__name__
+        return response
+    # Reuse the prior user topic only for explicit short follow-ups. Do not infer new facts.
+    followup=bool(re.search(r'\b(them|their|that|it|same)\b',question.lower()) or re.search(r'^(and |what about|how about)',question.lower()))
+    explicit=any(re.search(r'\b'+re.escape(k)+r'\b',question.lower()) for e in entries for k in e['keywords'] if len(k)>3)
+    query_input=question
+    if followup and not explicit and ctx.get('last_question'):
+        query_input=ctx['last_question']+' Follow-up: '+question
+    query,ctx,clarify=resolve_context(query_input,ctx)
+    response['context']=ctx
+    if clarify:response.update(text=clarify,mode='Clarification');return response
     matches,clashes,mode,warning=retrieve(query,entries,ctx,semantic)
     response.update(mode=mode,diagnostic=warning)
     if clashes:
-        response.update(text='I found conflicting source notes for the same topic and scope. Please confirm with the responsible office before relying on either.',entries=clashes,status='conflict'); return response
+        response.update(text='The available sources disagree on this point. Please confirm with the responsible office before relying on either version.',entries=clashes,status='conflict'); return response
     if not matches:
-        response.update(text='I don’t have verified evidence for that question yet. The SFBU contact directory can help you find the right office.',status='missing'); return response
-    selected=matches
+        response.update(text='I don’t have verified SFBU information for that question yet. Could you clarify the service or topic you need help with?',status='missing')
+        if os.environ.get('BAYLEY_WEBUI_API_KEY'):
+            try:response['text']=no_evidence_reply(question,history);response['mode']+=' · model clarification'
+            except Exception as exc:response['diagnostic']=type(exc).__name__
+        return response
+    response.update(text='Here’s what I found in the SFBU sources:',entries=matches,status='answered')
     if os.environ.get('BAYLEY_WEBUI_API_KEY'):
         try:
-            selected=draft_answer(query,matches); response['mode']+=' · '+os.environ.get('BAYLEY_MODEL','qwen3:8b')
+            generated=draft_answer(query,matches,history)
+            if not generated['paragraphs']:
+                response.update(text='The retrieved notes don’t answer that question clearly. Could you tell me more about what you need?',entries=[],status='missing')
+            else:
+                response.update(text='\n\n'.join(p['text'] for p in generated['paragraphs']),paragraphs=generated['paragraphs'],entries=generated['entries'])
+            response['mode']+=' · '+os.environ.get('BAYLEY_MODEL','qwen3:8b')
         except Exception as exc:
-            response['mode']+=' · source-note fallback'; response['diagnostic']=type(exc).__name__
-    if not selected:
-        response.update(text='The retrieved notes do not answer that question clearly. Please check with the relevant office.',status='missing'); return response
-    response.update(text='Here’s what the available SFBU sources say:',entries=selected,status='answered')
+            response['mode']+=' · source-note fallback';response['diagnostic']=type(exc).__name__
+    if response['status']=='answered':ctx['last_question']=query_input[-1500:]
     return response
