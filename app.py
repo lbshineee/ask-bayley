@@ -1,14 +1,13 @@
-"""Minimal search-to-chat interface for Ask Bayley."""
+"""Ask Bayley: minimal interface with evidence and reviewable handoffs."""
 import base64
 import os
 from pathlib import Path
-from urllib.error import URLError
-
 import streamlit as st
-from bayley import draft_answer, find_entries, load_data
-
-MASCOT = Path(__file__).parent / 'assets' / 'bayley.png'
-st.set_page_config(page_title='Ask Bayley · SFBU', page_icon=str(MASCOT), layout='centered', initial_sidebar_state='collapsed')
+from bayley import load_data, answer_question
+from actions import draft, mailto
+ROOT=Path(__file__).parent
+MASCOT=ROOT/'assets/bayley.png'
+st.set_page_config(page_title='Ask Bayley · SFBU',page_icon=str(MASCOT),layout='centered',initial_sidebar_state='collapsed')
 st.markdown('''<style>
 .stApp { background: #fff; color: #17364c; }
 .block-container { max-width: 800px; padding-top: 2rem; padding-bottom: 3rem; }
@@ -22,85 +21,110 @@ header[data-testid="stHeader"] { background: transparent; }
 .bayley-chat-title { color:#0c4266; font-size:24px; font-weight:650; margin-bottom:2px; }
 [data-testid="stChatInput"] { border-radius: 28px; border:1px solid #dce2e6; background:white; box-shadow:0 3px 14px #143a5810; }
 [data-testid="stChatMessage"] { background:#f7f9fb; border-radius:18px; animation:arrive .25s ease-out; }
-[data-testid="stChatMessageAvatarCustom"] { object-fit:contain; background:white; border-radius:50%; }
+[data-testid="stChatMessageAvatarCustom"] { object-fit:cover; object-position:50% 10%; background:white; border-radius:50%; }
+[data-testid="stChatMessage"] img[data-testid="stChatMessageAvatarCustom"] { width:44px; height:44px; object-fit:cover; object-position:center top; }
+[data-testid="stChatMessage"]:has(.bayley-avatar) [data-testid="stChatMessageAvatarCustom"] { display:none; }
+.bayley-avatar { width:44px; height:44px; overflow:hidden; border-radius:50%; background:#edf3f6; }
+.bayley-avatar img { width:132px; max-width:none; transform:translate(-44px,-3px); }
 @keyframes arrive { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
 </style>''', unsafe_allow_html=True)
 
 sources, entries = load_data()
-live = bool(os.environ.get('BAYLEY_WEBUI_API_KEY'))
-if 'messages' not in st.session_state:
-    st.session_state.messages = []
+encoded=base64.b64encode(MASCOT.read_bytes()).decode('ascii')
+for key,default in [('messages',[]),('context',{}),('feedback',{})]:
+    if key not in st.session_state: st.session_state[key]=default
 
-with st.sidebar:
-    st.subheader('Ask Bayley')
-    st.caption('SFBU student guide · Hackathon prototype')
-    st.caption(f"Model: {os.environ.get('BAYLEY_MODEL', 'qwen3:32b')} · API key configured" if live else 'Source-note preview · No model connected')
-    st.caption('A configured key is not proof of a successful API request. Each reply shows its mode.')
-    if st.button('New conversation'):
-        st.session_state.messages = []
-        st.rerun()
-    st.subheader('SFBU sources')
-    for source in sources.values():
-        st.markdown(f"[{source['title']}]({source['url']})")
-    st.caption('Limited curated notes. Calendar coverage: Spring and Summer 2027 standard semesters. Verify important decisions with SFBU.')
+def reset():
+    st.session_state.messages=[]; st.session_state.context={}; st.session_state.feedback={}
+    for key in list(st.session_state):
+        if key.startswith(('subject_','body_','vote_')): del st.session_state[key]
+    st.session_state.pop('pending',None)
 
-
-def render_reply(message):
-    with st.chat_message('assistant', avatar=str(MASCOT)):
-        st.markdown(message['text'])
-        st.caption(message['mode'])
-        if message.get('entries'):
-            with st.expander('Sources and supporting notes'):
-                for entry in message['entries']:
-                    st.markdown(f"**{entry['title']}**")
-                    st.write(entry['text'])
-                    st.caption(entry['section'])
-                    st.markdown(' · '.join(f"[{sources[s]['title']}]({sources[s]['url']})" for s in entry['source_ids']))
-
-
-has_chat = bool(st.session_state.messages)
-if not has_chat:
-    st.markdown('<div class="bayley-home"><h1>Ask Bayley</h1><p>Your SFBU student guide.</p></div>', unsafe_allow_html=True)
-    # A container keeps the initial input inline, above the mascot.
-    with st.container():
-        question = st.chat_input('What would you like to know about SFBU?', key='home_question', max_chars=1000)
-    encoded = base64.b64encode(MASCOT.read_bytes()).decode('ascii')
-    st.markdown(f'<div class="bayley-mascot"><img src="data:image/png;base64,{encoded}" alt="Bayley the Bayhawk, SFBU mascot"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="bayley-footnote">Deadlines, policies, and campus support.<br>Student-built prototype · Answers grounded in available SFBU notes.</div>', unsafe_allow_html=True)
-else:
-    st.markdown('<div class="bayley-chat-title">Ask Bayley</div>', unsafe_allow_html=True)
-    st.caption('Your SFBU student guide')
-    for message in st.session_state.messages:
-        if message['role'] == 'user':
-            with st.chat_message('user'):
-                st.write(message['text'])
-        else:
-            render_reply(message)
-    question = st.chat_input('Message Bayley…', key='chat_question', max_chars=1000)
-
-if question and question.strip():
-    st.session_state.messages.append({'role': 'user', 'text': question.strip()})
-    st.session_state.pending = question.strip()
+def submit(q):
+    st.session_state.messages.append({'role':'user','text':q})
+    st.session_state.pending=q
     st.rerun()
 
-# Rerun first so the mascot changes to an avatar before a slow model request.
+with st.sidebar:
+    st.subheader('Sources')
+    for source in sources.values():
+        st.markdown(f"[{source['title']}]({source['url']})")
+    st.caption('A source link is not proof that the full document is indexed. This version uses 26 reviewed notes.')
+    with st.expander('Connection and retrieval'):
+        st.caption('Model: '+os.environ.get('BAYLEY_MODEL','qwen3:8b'))
+        st.caption('API key configured' if os.environ.get('BAYLEY_WEBUI_API_KEY') else 'No API key · source notes only')
+        semantic=st.checkbox('Use semantic retrieval',value=True)
+        st.caption('Nomic uses the WebUI Ollama proxy. If unavailable, keyword retrieval continues.')
+    st.caption('Student-built prototype. Feedback stays in this browser session; it is not sent to an analytics service.')
+
+# Keep this control visible even with the sidebar closed.
+_,control=st.columns([4,1])
+with control: st.button('New conversation',on_click=reset,use_container_width=True)
+
+def render_reply(message,index):
+    # CSS crops the displayed original image to the face/shoulders; source PNG is unchanged.
+    with st.chat_message('assistant',avatar=str(MASCOT)):
+        st.markdown(f'<div class="bayley-avatar"><img src="data:image/png;base64,{encoded}" alt="Bayley the Bayhawk"></div>',unsafe_allow_html=True)
+        st.markdown(message['text'])
+        for n,e in enumerate(message.get('entries',[]),1):
+            source=sources[e['source_ids'][0]]
+            st.markdown(f"{e['text']} **[Evidence {n}]({source['url']})**")
+        if message.get('context',{}).get('season'):
+            ctx=message['context']; st.caption('Conversation context: '+ctx.get('season','').title()+' '+ctx.get('year','')+' · '+ctx.get('program','program not specified'))
+        if message.get('entries'):
+            with st.expander('Evidence and applicability'):
+                for n,e in enumerate(message['entries'],1):
+                    st.markdown(f"**Evidence {n} · {e['title']}**")
+                    st.write(e['text'])
+                    st.caption(f"Section: {e['section']} · Owner: {e['source_owner']} · Checked: {e['checked_on']}")
+                    st.caption(f"Scope: {e.get('term') or 'No term specified'} · {e['program']} · Effective: {e.get('effective_from') or 'Not stated'} to {e.get('effective_to') or 'Not stated'}")
+                    for sid in e['source_ids']: st.markdown(f"[{sources[sid]['title']}]({sources[sid]['url']})")
+        if message.get('status') in ['missing','conflict']:
+            st.link_button('Find the right SFBU office',sources['contact']['url'])
+        contacts=[e for e in message.get('entries',[]) if e.get('contact_email')]
+        if contacts and message.get('status')!='conflict':
+            with st.expander('Next step · Prepare a request'):
+                target=st.selectbox('Department',contacts,format_func=lambda e:e['title'],key=f'target_{index}')
+                subject,body=draft(message['question'],target)
+                suffix=f"{index}_{target['id']}"
+                st.caption('Draft only. Review and edit before sharing. Do not include passwords or API keys.')
+                st.text_input('To',value=target['contact_email'],disabled=True,key='to_'+suffix)
+                subject=st.text_input('Subject',value=subject,key='subject_'+suffix)
+                body=st.text_area('Message',value=body,height=220,key='body_'+suffix)
+                st.link_button('Open email draft',mailto(target['contact_email'],subject,body))
+                st.download_button('Download draft',subject+'\n\n'+body,file_name='bayley-request.txt',key='download_'+suffix)
+                if target['id']=='it': st.link_button('Open official AskIT form',sources['askit']['url'])
+                st.caption('Opening your email app does not send the message. Copy the draft into the IT form if using the form.')
+        with st.expander('Was this useful?'):
+            choice=st.radio('Your feedback',['Not rated','Helpful','Needs improvement'],key=f'vote_{index}',horizontal=True,label_visibility='collapsed')
+            st.session_state.feedback[index]=choice
+            st.caption('Session-only feedback. No chat transcript is submitted.')
+        with st.expander('How this answer was produced'):
+            st.caption(message['mode'])
+            if message.get('diagnostic'): st.caption('Connection or validation issue: '+message['diagnostic'])
+
+if not st.session_state.messages:
+    st.markdown('<div class="bayley-home"><h1>Ask Bayley</h1><p>Your SFBU student guide.</p></div>',unsafe_allow_html=True)
+    with st.container(): question=st.chat_input('What would you like to know about SFBU?',key='home_question',max_chars=1000)
+    for col,q in zip(st.columns(3),['Who is SFBU’s president?','Where do I get Canvas help?','How do I join a club?']):
+        with col:
+            if st.button(q,use_container_width=True): submit(q)
+    st.markdown(f'<div class="bayley-mascot"><img src="data:image/png;base64,{encoded}" alt="Bayley the Bayhawk"></div>',unsafe_allow_html=True)
+    st.markdown('<div class="bayley-footnote">Official sources. Practical next steps.<br>Student-built SFBU guide.</div>',unsafe_allow_html=True)
+else:
+    st.markdown('<div class="bayley-chat-title">Ask Bayley</div>',unsafe_allow_html=True)
+    st.caption('Your SFBU student guide')
+    for i,message in enumerate(st.session_state.messages):
+        if message['role']=='user':
+            with st.chat_message('user'): st.write(message['text'])
+        else: render_reply(message,i)
+    question=st.chat_input('Message Bayley…',key='chat_question',max_chars=1000)
+if question and question.strip(): submit(question.strip())
 if st.session_state.get('pending'):
-    question = st.session_state.pop('pending')
-    matches, needs_term = find_entries(question, entries)
-    mode = 'Source-note preview · No model used'
-    if needs_term:
-        answer = 'Which term and year do you mean? Please include them in your question—for example, “When do classes start in Spring 2027?”'
-    elif not matches:
-        answer = "I couldn’t find that in my available SFBU notes. You can check the official links in the sidebar. I won’t guess a date or policy."
-    else:
-        answer = '\n\n'.join(entry['text'] for entry in matches)
-        if live:
-            with st.spinner('Bayley is checking the source notes…'):
-                try:
-                    answer = draft_answer(question, matches)
-                    mode = f"Model reply · {os.environ.get('BAYLEY_MODEL', 'qwen3:32b')}"
-                except (URLError, TimeoutError, ValueError, KeyError, IndexError, TypeError):
-                    mode = 'Model unavailable · Showing source notes'
-    st.session_state.messages.append({'role': 'assistant', 'text': answer, 'entries': matches, 'mode': mode})
+    q=st.session_state.pop('pending')
+    with st.spinner('Checking the available SFBU evidence…'):
+        reply=answer_question(q,entries,st.session_state.context,semantic)
+    st.session_state.context=reply['context']
+    st.session_state.messages.append(reply)
     st.rerun()

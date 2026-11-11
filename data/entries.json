@@ -1,54 +1,629 @@
 [
   {
-    "title": "Spring 2027 class start",
-    "text": "For the standard Spring 2027 semester, classes begin Monday, January 11, 2027.",
-    "source_ids": ["calendar"],
-    "section": "Spring 2027",
-    "term": "Spring 2027",
-    "keywords": ["start", "starts", "begin", "begins", "first day"]
+    "id": "president",
+    "title": "University president",
+    "text": "SFBU lists Nick Ladany, Ph.D., as its president.",
+    "keywords": [
+      "president",
+      "presendate",
+      "presendat",
+      "presidant",
+      "leadership",
+      "head of university"
+    ],
+    "source_ids": [
+      "leadership"
+    ],
+    "section": "Nick Ladany, Ph.D.",
+    "source_owner": "SFBU leadership",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "president",
+    "fact_value": "SFBU lists Nick Ladany, Ph.D., as its president."
   },
   {
-    "title": "Summer 2027 add/drop",
-    "text": "For the standard Summer 2027 semester, classes and the add/drop period begin June 1, 2027. June 5, 2027 is the last day to add a class or drop it without an enrollment record.",
-    "source_ids": ["calendar"],
-    "section": "Summer 2027",
-    "term": "Summer 2027",
-    "keywords": ["add", "drop", "deadline", "registration", "start", "starts", "begin", "begins", "first day"]
-  },
-  {
-    "title": "Summer 2027 withdrawal",
-    "text": "For the standard Summer 2027 semester, the course withdrawal period begins June 7, 2027 and ends July 3, 2027.",
-    "source_ids": ["calendar"],
-    "section": "Summer 2027",
-    "term": "Summer 2027",
-    "keywords": ["withdraw", "withdrawal", "deadline"]
-  },
-  {
-    "title": "Adding and dropping courses",
-    "text": "The catalog directs semester students to the Academic Calendar for the add/drop deadline. Adding a course depends on available space. The catalog has a separate policy for Pro+ programs.",
-    "source_ids": ["catalog", "calendar"],
-    "section": "Catalog p. 54, Adding and Dropping Courses",
-    "keywords": ["add", "drop", "registration"]
-  },
-  {
-    "title": "Academic Advising and Records",
-    "text": "SFBU's Contact Us page lists records@sfbu.edu for Academic Advising and the Records Office. It identifies Records as the contact for transcripts, diplomas, and education verification.",
-    "source_ids": ["contact"],
-    "section": "Academic Advising and Records Office",
-    "keywords": ["advising", "advisor", "records", "transcript", "diploma", "verification"]
-  },
-  {
+    "id": "it",
     "title": "IT Support",
-    "text": "SFBU lists AskIT@sfbu.edu for IT Support. Use the AskIT form to submit a support request.",
-    "source_ids": ["contact", "askit"],
-    "section": "IT Support Services",
-    "keywords": ["it support", "tech support", "technical support", "canvas", "password", "login", "wi-fi", "wifi", "askit"]
+    "text": "IT Support: AskIT@sfbu.edu.",
+    "keywords": [
+      "canvas",
+      "password",
+      "login",
+      "wifi",
+      "wi-fi",
+      "technical",
+      "it support",
+      "askit",
+      "technology"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "IT Support",
+    "source_owner": "IT Support",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "it",
+    "fact_value": "IT Support: AskIT@sfbu.edu.",
+    "contact_email": "AskIT@sfbu.edu"
   },
   {
+    "id": "records",
+    "title": "Academic Advising and Records",
+    "text": "Academic Advising and Records: records@sfbu.edu.",
+    "keywords": [
+      "advisor",
+      "advising",
+      "transcript",
+      "diploma",
+      "records",
+      "education verification"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Academic Advising and Records",
+    "source_owner": "Academic Advising and Records",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "records",
+    "fact_value": "Academic Advising and Records: records@sfbu.edu.",
+    "contact_email": "records@sfbu.edu"
+  },
+  {
+    "id": "finance",
     "title": "Student Accounts",
-    "text": "SFBU lists studentaccounts@sfbu.edu for the Finance Office and Student Accounts.",
-    "source_ids": ["contact", "resources"],
-    "section": "Finance Office and Student Accounts",
-    "keywords": ["student accounts", "finance", "billing", "bursar", "payment"]
+    "text": "Student Accounts: studentaccounts@sfbu.edu.",
+    "keywords": [
+      "tuition",
+      "bill",
+      "billing",
+      "payment",
+      "finance",
+      "student accounts"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Student Accounts",
+    "source_owner": "Student Accounts",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "finance",
+    "fact_value": "Student Accounts: studentaccounts@sfbu.edu.",
+    "contact_email": "studentaccounts@sfbu.edu"
+  },
+  {
+    "id": "admissions",
+    "title": "Admissions",
+    "text": "Admissions: admissions@sfbu.edu.",
+    "keywords": [
+      "admissions",
+      "apply",
+      "application"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Admissions",
+    "source_owner": "Admissions",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "admissions",
+    "fact_value": "Admissions: admissions@sfbu.edu.",
+    "contact_email": "admissions@sfbu.edu"
+  },
+  {
+    "id": "career",
+    "title": "Career Services",
+    "text": "Career Services: career-services@sfbu.edu.",
+    "keywords": [
+      "career",
+      "resume",
+      "internship",
+      "job"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Career Services",
+    "source_owner": "Career Services",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "career",
+    "fact_value": "Career Services: career-services@sfbu.edu.",
+    "contact_email": "career-services@sfbu.edu"
+  },
+  {
+    "id": "housing",
+    "title": "Housing Services",
+    "text": "Housing Services: housing@sfbu.edu.",
+    "keywords": [
+      "housing",
+      "dorm",
+      "room",
+      "moving"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Housing Services",
+    "source_owner": "Housing Services",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "housing",
+    "fact_value": "Housing Services: housing@sfbu.edu.",
+    "contact_email": "housing@sfbu.edu"
+  },
+  {
+    "id": "iss",
+    "title": "International Student Services",
+    "text": "International Student Services: iss@sfbu.edu.",
+    "keywords": [
+      "visa",
+      "international",
+      "cpt",
+      "opt",
+      "i-20",
+      "immigration"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "International Student Services",
+    "source_owner": "International Student Services",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "iss",
+    "fact_value": "International Student Services: iss@sfbu.edu.",
+    "contact_email": "iss@sfbu.edu"
+  },
+  {
+    "id": "library",
+    "title": "Library Services",
+    "text": "Library Services: lib@sfbu.edu.",
+    "keywords": [
+      "library",
+      "borrow",
+      "books"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Library Services",
+    "source_owner": "Library Services",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "library",
+    "fact_value": "Library Services: lib@sfbu.edu.",
+    "contact_email": "lib@sfbu.edu"
+  },
+  {
+    "id": "hours",
+    "title": "General service hours",
+    "text": "General service hours: Monday\u2013Friday, 9:00 a.m.\u20135:30 p.m. Weekend service is closed.",
+    "keywords": [
+      "service hours",
+      "office hours",
+      "opening hours"
+    ],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Service Hours",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "hours",
+    "fact_value": "General service hours: Monday\u2013Friday, 9:00 a.m.\u20135:30 p.m. Weekend service is closed."
+  },
+  {
+    "id": "clubs",
+    "title": "Student Life",
+    "text": "Student Life: student-events@sfbu.edu.",
+    "keywords": [
+      "club",
+      "clubs",
+      "event",
+      "events",
+      "student life",
+      "join"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Student Life",
+    "source_owner": "Student Life",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "clubs",
+    "fact_value": "Student Life: student-events@sfbu.edu.",
+    "contact_email": "student-events@sfbu.edu"
+  },
+  {
+    "id": "accessibility",
+    "title": "Accommodations",
+    "text": "Accommodations: accessibility@sfbu.edu.",
+    "keywords": [
+      "accommodation",
+      "accommodations",
+      "disability",
+      "accessibility"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Accommodations",
+    "source_owner": "Accommodations",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "accessibility",
+    "fact_value": "Accommodations: accessibility@sfbu.edu.",
+    "contact_email": "accessibility@sfbu.edu"
+  },
+  {
+    "id": "facilities",
+    "title": "Facilities",
+    "text": "Facilities: facilities@sfbu.edu.",
+    "keywords": [
+      "repair",
+      "repairs",
+      "lockout",
+      "facilities",
+      "furniture"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Facilities",
+    "source_owner": "Facilities",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "facilities",
+    "fact_value": "Facilities: facilities@sfbu.edu.",
+    "contact_email": "facilities@sfbu.edu"
+  },
+  {
+    "id": "insurance",
+    "title": "Insurance questions",
+    "text": "Insurance questions: health-insurance@sfbu.edu.",
+    "keywords": [
+      "insurance"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Insurance questions",
+    "source_owner": "Insurance questions",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "insurance",
+    "fact_value": "Insurance questions: health-insurance@sfbu.edu.",
+    "contact_email": "health-insurance@sfbu.edu"
+  },
+  {
+    "id": "food",
+    "title": "Food pantry and clothing closets",
+    "text": "Food pantry and clothing closets: student-affairs@sfbu.edu.",
+    "keywords": [
+      "food",
+      "pantry",
+      "clothing"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "Food pantry and clothing closets",
+    "source_owner": "SFBU Student Affairs",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "food",
+    "fact_value": "Food pantry and clothing closets: student-affairs@sfbu.edu.",
+    "contact_email": "student-affairs@sfbu.edu"
+  },
+  {
+    "id": "transit",
+    "title": "AC Transit Easy Pass",
+    "text": "AC Transit Easy Pass: student-affairs@sfbu.edu.",
+    "keywords": [
+      "bus",
+      "transit",
+      "easy pass",
+      "transportation"
+    ],
+    "source_ids": [
+      "resources"
+    ],
+    "section": "AC Transit Easy Pass",
+    "source_owner": "SFBU Student Affairs",
+    "checked_on": "2026-11-11",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "transit",
+    "fact_value": "AC Transit Easy Pass: student-affairs@sfbu.edu.",
+    "contact_email": "student-affairs@sfbu.edu"
+  },
+  {
+    "id": "spring-2027-start",
+    "title": "Spring 2027 start",
+    "text": "Spring 2027: classes begin January 11, 2027.",
+    "keywords": [
+      "start",
+      "starts",
+      "begin",
+      "begins",
+      "first day"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Spring 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Spring 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "start",
+    "fact_value": "Spring 2027: classes begin January 11, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "spring-2027-drop",
+    "title": "Spring 2027 drop",
+    "text": "Spring 2027: add/drop without enrollment record ends January 16, 2027.",
+    "keywords": [
+      "add",
+      "drop",
+      "registration deadline"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Spring 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Spring 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "drop",
+    "fact_value": "Spring 2027: add/drop without enrollment record ends January 16, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "spring-2027-withdraw",
+    "title": "Spring 2027 withdraw",
+    "text": "Spring 2027: withdrawal deadline is April 10, 2027.",
+    "keywords": [
+      "withdraw",
+      "withdrawal"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Spring 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Spring 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "withdraw",
+    "fact_value": "Spring 2027: withdrawal deadline is April 10, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "spring-2027-finals",
+    "title": "Spring 2027 finals",
+    "text": "Spring 2027: final examinations are May 3\u20138, 2027.",
+    "keywords": [
+      "exam",
+      "exams",
+      "final",
+      "finals",
+      "examinations"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Spring 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Spring 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "finals",
+    "fact_value": "Spring 2027: final examinations are May 3\u20138, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "spring-2027-end",
+    "title": "Spring 2027 end",
+    "text": "Spring 2027: semester ends May 11, 2027.",
+    "keywords": [
+      "end",
+      "ends",
+      "finish"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Spring 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Spring 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "end",
+    "fact_value": "Spring 2027: semester ends May 11, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "summer-2027-start",
+    "title": "Summer 2027 start",
+    "text": "Summer 2027: classes begin June 1, 2027.",
+    "keywords": [
+      "start",
+      "starts",
+      "begin",
+      "begins",
+      "first day"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Summer 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Summer 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "start",
+    "fact_value": "Summer 2027: classes begin June 1, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "summer-2027-drop",
+    "title": "Summer 2027 drop",
+    "text": "Summer 2027: add/drop without enrollment record ends June 5, 2027.",
+    "keywords": [
+      "add",
+      "drop",
+      "registration deadline"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Summer 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Summer 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "drop",
+    "fact_value": "Summer 2027: add/drop without enrollment record ends June 5, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "summer-2027-withdraw",
+    "title": "Summer 2027 withdraw",
+    "text": "Summer 2027: withdrawal deadline is July 3, 2027.",
+    "keywords": [
+      "withdraw",
+      "withdrawal"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Summer 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Summer 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "withdraw",
+    "fact_value": "Summer 2027: withdrawal deadline is July 3, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "summer-2027-finals",
+    "title": "Summer 2027 finals",
+    "text": "Summer 2027: final examinations are July 19\u201324, 2027.",
+    "keywords": [
+      "exam",
+      "exams",
+      "final",
+      "finals",
+      "examinations"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Summer 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Summer 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "finals",
+    "fact_value": "Summer 2027: final examinations are July 19\u201324, 2027.",
+    "topic": "calendar"
+  },
+  {
+    "id": "summer-2027-end",
+    "title": "Summer 2027 end",
+    "text": "Summer 2027: semester ends July 28, 2027.",
+    "keywords": [
+      "end",
+      "ends",
+      "finish"
+    ],
+    "source_ids": [
+      "calendar"
+    ],
+    "section": "Summer 2027",
+    "source_owner": "SFBU Academic Calendar",
+    "checked_on": "2026-11-11",
+    "program": "standard semester",
+    "term": "Summer 2027",
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "end",
+    "fact_value": "Summer 2027: semester ends July 28, 2027.",
+    "topic": "calendar"
   }
 ]

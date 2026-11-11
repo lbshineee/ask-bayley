@@ -1,9 +1,50 @@
 {
-  "sfbu": {"title": "SFBU Homepage", "url": "https://www.sfbu.edu/"},
-  "calendar": {"title": "Academic Calendar", "url": "https://www.sfbu.edu/learning-teaching/academic-calendar"},
-  "catalog": {"title": "University Catalog 2026–2027", "url": "https://www.sfbu.edu/learning-teaching/university-catalog"},
-  "handbook": {"title": "Student Handbook 2026–2027", "url": "https://www.sfbu.edu/sites/default/files/student-handbook-2026-2027.pdf"},
-  "askit": {"title": "AskIT Form", "url": "https://www.sfbu.edu/contact-us/askit-form"},
-  "resources": {"title": "SFBU Resources", "url": "https://www.sfbu.edu/student-life-support/sfbu-resources"},
-  "contact": {"title": "Contact Us", "url": "https://www.sfbu.edu/contact-us"}
+  "sfbu": {
+    "title": "SFBU Homepage",
+    "url": "https://www.sfbu.edu/",
+    "checked_on": null,
+    "owner": "SFBU"
+  },
+  "calendar": {
+    "title": "Academic Calendar",
+    "url": "https://www.sfbu.edu/learning-teaching/academic-calendar",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  },
+  "catalog": {
+    "title": "University Catalog 2026\u20132027",
+    "url": "https://www.sfbu.edu/learning-teaching/university-catalog",
+    "checked_on": null,
+    "owner": "SFBU"
+  },
+  "handbook": {
+    "title": "Student Handbook 2026\u20132027",
+    "url": "https://www.sfbu.edu/sites/default/files/student-handbook-2026-2027.pdf",
+    "checked_on": null,
+    "owner": "SFBU"
+  },
+  "askit": {
+    "title": "AskIT Form",
+    "url": "https://www.sfbu.edu/contact-us/askit-form",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  },
+  "resources": {
+    "title": "SFBU Resources",
+    "url": "https://www.sfbu.edu/student-life-support/sfbu-resources",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "url": "https://www.sfbu.edu/contact-us",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  },
+  "leadership": {
+    "title": "Our Leadership",
+    "url": "https://www.sfbu.edu/about/our-leadership",
+    "checked_on": "2026-11-11",
+    "owner": "SFBU"
+  }
 }
