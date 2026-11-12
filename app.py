@@ -35,7 +35,7 @@ for key,default in [('messages',[]),('context',{}),('feedback',{})]:
 def reset():
     st.session_state.messages=[]; st.session_state.context={}; st.session_state.feedback={}
     for key in list(st.session_state):
-        if key.startswith(('subject_','body_','vote_')): del st.session_state[key]
+        if key.startswith(('subject_','body_','vote_','target_','to_')): del st.session_state[key]
     st.session_state.pop('pending',None)
 
 def submit(q):
@@ -53,7 +53,7 @@ with st.sidebar:
         st.caption('API key configured' if os.environ.get('BAYLEY_WEBUI_API_KEY') else 'No API key · source notes only')
         semantic=st.checkbox('Use semantic retrieval',value=True)
         st.caption('Nomic uses the WebUI Ollama proxy. If unavailable, keyword retrieval continues.')
-    st.caption('Student-built prototype. Feedback stays in this browser session; it is not sent to an analytics service.')
+    st.caption('Student-built prototype. Feedback stays in this app session; it is not sent to an analytics service.')
 
 # Keep this control visible even with the sidebar closed.
 _,control=st.columns([3,2])
@@ -93,9 +93,9 @@ def render_reply(message,index):
             st.link_button('Find the right SFBU office',sources['contact']['url'])
         contacts=[e for e in message.get('entries',[]) if e.get('contact_email')]
         if contacts and message.get('status')!='conflict':
-            with st.expander('Next step · Prepare a request'):
+            with st.expander('Next step · Prepare a request',expanded=message.get('status')=='draft'):
                 target=st.selectbox('Department',contacts,format_func=lambda e:e['title'],key=f'target_{index}')
-                subject,body=draft(message['question'],target)
+                subject,body=draft(message.get('draft_question',message['question']),target)
                 suffix=f"{index}_{target['id']}"
                 st.caption('Draft only. Review and edit before sharing. Do not include passwords or API keys.')
                 st.text_input('To',value=target['contact_email'],disabled=True,key='to_'+suffix)

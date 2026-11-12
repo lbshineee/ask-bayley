@@ -8,9 +8,11 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 from urllib.request import Request, urlopen
+from conversation import (resolve_context, without_calendar, retrieval_question,
+                          draft_requested, followup_question, has_topic, technical_request)
 
 ROOT = Path(__file__).parent
-STOP = set('the a an is are of in on at to for i my me do does can how what when where who sfbu university school please and it this that'.split())
+STOP = set('the a an is are of in on at to for i my me do does can how what when where who sfbu university school please and it this that help support get need could would should someone anyone'.split())
 
 def load_data():
     return (json.loads((ROOT/'data/sources.json').read_text()), json.loads((ROOT/'data/entries.json').read_text()))
@@ -63,36 +65,6 @@ def lexical_scores(question,entries):
         scores.append(score)
     return scores
 
-def resolve_context(question,context):
-    ctx=dict(context); q=question.lower()
-    seasons=re.findall(r'\b(spring|summer|fall|winter)\b',q); years=re.findall(r'\b20\d{2}\b',q)
-    if len(set(seasons))>1 or len(set(years))>1: return question,ctx,'Please ask about one term and year at a time.'
-    explicit_program=bool(re.search(r'pro\s*\+|8[- ]week|standard',q))
-    new_term=(seasons and seasons[0]!=ctx.get('season')) or (years and years[0]!=ctx.get('year'))
-    if new_term and not explicit_program and not ctx.get('pending_question'):
-        ctx.pop('program',None)
-    if seasons:
-        if ctx.get('season')!=seasons[0] and not years: ctx.pop('year',None)
-        ctx['season']=seasons[0]
-    if years: ctx['year']=years[0]
-    if re.search(r'\bpro\s*\+|\b8[- ]week',q): ctx['program']='Pro+'
-    elif 'standard' in q: ctx['program']='standard semester'
-    date_words=r'\b(start|starts|begin|begins|drop|add|withdraw|withdrawal|deadline|exams?|finals?|end|ends|registration)\b'
-    calendar=bool(re.search(date_words,q))
-    # A bare term/year answers a pending clarification, retaining its question.
-    if ctx.get('pending_question') and (seasons or years or 'standard' in q or 'pro+' in q):
-        question=ctx['pending_question']+' '+question; calendar=True
-    if calendar:
-        if not ctx.get('season') or not ctx.get('year'):
-            ctx['pending_question']=question
-            return question,ctx,'Which term and year do you mean—for example, Spring 2027?'
-        if not ctx.get('program'):
-            ctx['pending_question']=question
-            return question,ctx,'Is this for a standard semester or a Pro+ program?'
-        ctx.pop('pending_question',None)
-        question += ' '+ctx['season']+' '+ctx['year']
-    return question,ctx,None
-
 def conflicts(entries):
     groups={}
     for e in entries:
@@ -102,17 +74,19 @@ def conflicts(entries):
 
 def retrieve(question,entries,context,semantic=True,today=None):
     today=today or date.today().isoformat()
-    calendar=bool(re.search(r'\b(start|starts|begin|begins|drop|add|withdraw|withdrawal|deadline|exams?|finals?|end|ends|registration)\b',question.lower()))
+    calendar=context.get('active_topic')=='calendar'
     term=(context.get('season','')+' '+context.get('year','')).strip().title()
     candidates=[]
     for e in entries:
-        if calendar and e.get('topic')=='calendar':
-            if e.get('term')!=term or context.get('program')!='standard semester': continue
+        if calendar:
+            if e.get('topic')!='calendar' or e.get('term')!=term or e.get('program')!=context.get('program'): continue
+            if context.get('calendar_event') not in (None,'schedule',e.get('fact_key')): continue
         elif e.get('topic')=='calendar': continue
         # Calendar entries are intentionally selectable for their requested future term.
         if e.get('topic')!='calendar' and ((e.get('effective_from') and today<e['effective_from']) or (e.get('effective_to') and today>e['effective_to'])): continue
         if not e.get('checked_on'): continue
         candidates.append(e)
+    question=retrieval_question(question)
     scores=lexical_scores(question,candidates); semantic_scores=[0.0]*len(candidates)
     mode='Keyword retrieval'; warning=None
     if semantic and candidates and os.environ.get('BAYLEY_WEBUI_API_KEY'):
@@ -206,7 +180,7 @@ def conversational_kind(question):
     if q in ['hi','hello','hey','who are you','what are you','what can you do','introduce yourself','what is your name',"what’s your name","what's your name"]: return 'identity'
     if q in ['thanks','thank you','thank you bayley']: return 'thanks'
     # Narrow general-help scope; school-specific information still requires evidence.
-    if not re.search(r'\b(sfbu|policy|deadline|calendar|professor|tuition|visa|cpt|opt)\b',q) and re.search(r'study (plan|tips|better)|manage my time|time management|procrastinat|prepare for (an? )?exam',q): return 'general'
+    if not re.search(r'\b(sfbu|policy|deadline|calendar|professor|tuition|visa|cpt|opt)\b',q) and re.search(r'study (plan|tips|better)|manage my time|time management|procrastinat|(?:prepare|study|revise) for (?:my |the |an? |upcoming )?(?:exams?|finals?|tests?)',q): return 'general'
     return 'school'
 
 
@@ -220,18 +194,6 @@ def general_reply(question,history):
     text=result.get('answer')
     if not isinstance(text,str) or not text.strip() or len(text)>2200 or re.search(r'https?://|[\w.+-]+@[\w.-]+',text): raise ValueError('Invalid general answer')
     return text.strip()
-
-
-def no_evidence_reply(question,history):
-    result=completion([{'role':'system','content':
-        'You are Bayley. No verified evidence was found for the student question. '
-        'Ask ONE short clarifying question that helps identify the topic, service or program. '
-        'Do not answer the factual question, suggest facts, name departments, or invent dates/contacts. '
-        'Return only JSON {"clarification":"one question?"}. Maximum 220 characters.'},
-        {'role':'user','content':json.dumps({'question':question,'context':bounded_history(history)})+'\n/no_think'}])
-    text=result.get('clarification','')
-    if not isinstance(text,str) or not text.endswith('?') or len(text)>220 or text.count('?')!=1 or re.search(r'\d|https?://|@|\n',text): raise ValueError('Invalid clarification')
-    return 'I don’t have verified SFBU information for that yet. '+text
 
 
 def early_response(question):
@@ -248,34 +210,76 @@ def early_response(question):
     return None
 
 
+def request_reply(question, entries, context):
+    """Reuse only a student-provided problem and a verified, applicable contact."""
+    ctx=without_calendar(context)
+    previous=ctx.get('request_context',{})
+    contacts=[e for e in entries if e.get('contact_email') and e.get('checked_on')
+              and not (e.get('effective_to') and date.today().isoformat()>e['effective_to'])
+              and not (e.get('effective_from') and date.today().isoformat()<e['effective_from'])]
+    # Match the addressee before the inline problem, so an issue mentioning Canvas
+    # cannot silently change an explicit Housing recipient to IT.
+    request_header=re.split(r':|\bbecause\b|\babout\b',question,maxsplit=1,flags=re.I)[0]
+    if technical_request(request_header):
+        explicit=[e for e in contacts if e['id']=='it']
+    else:
+        explicit=[e for e in contacts if has_topic(request_header,[e])]
+    unknown_target=bool(re.search(r'\bto\s+',request_header,re.I) and not explicit
+                        and not re.search(r'\b(them|him|her|it|that office)\b',request_header,re.I))
+    selected=explicit or ([] if unknown_target else [e for e in contacts if e['id'] in previous.get('contact_ids',[])])
+    inline=re.split(r':|\bbecause\b|\babout\b',question,maxsplit=1,flags=re.I)
+    problem=inline[1].strip() if len(inline)>1 else ''
+    same_contact=bool({e['id'] for e in selected} & set(previous.get('contact_ids',[])))
+    if not problem and same_contact: problem=previous.get('text','')
+    response={'role':'assistant','question':question,'text':'','entries':[],
+              'paragraphs':[],'context':ctx,'mode':'Request preparation · no model request','status':'clarification'}
+    if not selected:
+        ctx.pop('request_context',None)
+        response['text']='Which office should the request go to, and what problem should it describe?'
+        return response
+    if not problem:
+        ctx.pop('request_context',None)
+        response['text']='What should the message describe? Tell me the problem or paste the error text, without passwords or API keys.'
+        return response
+    ctx['request_context']={'text':problem[:2000],'contact_ids':[e['id'] for e in selected]}
+    response.update(text='Your editable draft is below. I included the problem you described; please review the recipient and details before sharing. Nothing has been sent.',
+                    entries=selected,draft_question=problem[:2000],status='draft')
+    return response
+
+
 def answer_question(question,entries,context,semantic=True,history=None):
     early=early_response(question)
     if early:
-        return {'role':'assistant','question':question,'text':early[0],'mode':early[1],'context':dict(context),'entries':[],'paragraphs':[],'status':'conversation'}
+        return {'role':'assistant','question':question,'text':early[0],'mode':early[1],'context':without_calendar(context),'entries':[],'paragraphs':[],'status':'conversation'}
     kind=conversational_kind(question)
     ctx=dict(context)
     response={'role':'assistant','question':question,'entries':[],'context':ctx,'paragraphs':[],
         'mode':'Configured identity','text':'','status':'conversation'}
-    if kind=='identity': response['text']=IDENTITY; return response
+    if kind=='identity':
+        response.update(text=IDENTITY,context=without_calendar(ctx)); return response
     if kind=='thanks': response['text']='You’re welcome! What else can I help you find?'; return response
+    if draft_requested(question): return request_reply(question,entries,ctx)
     if kind=='general':
-        response.update(text='General study guidance: choose one manageable task, set a short focused work session, and review what you learned. What subject are you working on?',mode='General guidance · built-in fallback')
+        ctx=without_calendar(ctx)
+        ctx.pop('request_context',None);ctx.pop('last_question',None)
+        ctx['active_topic']='general'
+        response.update(context=ctx,text='General study guidance: choose one manageable task, set a short focused work session, and review what you learned. What subject are you working on?',mode='General guidance · built-in fallback')
         if os.environ.get('BAYLEY_WEBUI_API_KEY'):
             try:
                 response['text']=general_reply(question,history);response['mode']='General guidance · '+os.environ.get('BAYLEY_MODEL','qwen3:8b')
             except Exception as exc:response['diagnostic']=type(exc).__name__
         return response
-    # Reuse the prior user topic only for explicit short follow-ups. Do not infer new facts.
-    followup=bool(re.search(r'\b(them|their|that|it|same)\b',question.lower()) or re.search(r'^(and |what about|how about)',question.lower()))
-    explicit=any(re.search(r'\b'+re.escape(k)+r'\b',question.lower()) for e in entries for k in e['keywords'] if len(k)>3)
-    query_input=question
-    if followup and not explicit and ctx.get('last_question'):
-        query_input=ctx['last_question']+' Follow-up: '+question
-    query,ctx,clarify=resolve_context(query_input,ctx)
-    response['context']=ctx
-    calendar=bool(re.search(r'\b(start|starts|begin|begins|drop|add|withdraw|withdrawal|deadline|exams?|finals?|end|ends|registration)\b',question.lower())) or bool(context.get('pending_question'))
-    response['show_calendar_context']=calendar
-    if calendar:
+    query,ctx,clarify=resolve_context(question,ctx)
+    calendar=ctx.get('active_topic')=='calendar'
+    continued=False
+    if not calendar and not clarify:
+        continued=bool(followup_question(question) and not has_topic(question,entries) and ctx.get('last_question'))
+        if continued:
+            query=ctx['last_question']+' Follow-up: '+question
+        else:
+            ctx.pop('request_context',None);ctx.pop('last_question',None)
+    response.update(context=ctx,show_calendar_context=calendar)
+    if calendar and ctx.get('calendar_event'):
         term=(ctx.get('season','')+' '+ctx.get('year','')).strip().title()
         available=[e for e in entries if e.get('topic')=='calendar' and e.get('term')==term]
         missing_term=ctx.get('season') and ctx.get('year') and not available
@@ -285,7 +289,7 @@ def answer_question(question,entries,context,semantic=True,history=None):
             ctx.pop('pending_question',None)
             response.update(text=f'I don’t have verified calendar dates for {scope}. Please check SFBU’s official Academic Calendar or contact Academic Records. I won’t substitute dates from another term or program.',status='missing_calendar',mode='Coverage check · no model request',action_source='calendar')
             return response
-    if clarify:response.update(text=clarify,mode='Clarification');return response
+    if clarify:response.update(text=clarify,mode='Clarification',status='clarification');return response
     matches,clashes,mode,warning=retrieve(query,entries,ctx,semantic)
     response.update(mode=mode,diagnostic=warning)
     if clashes:
@@ -293,6 +297,7 @@ def answer_question(question,entries,context,semantic=True,history=None):
     if not matches:
         response.update(text='I don’t have verified SFBU information for that question yet. Could you clarify the service or topic you need help with?',status='missing')
         response['mode']+=' · no supporting evidence'
+        if calendar: response['action_source']='calendar'
         return response
     response.update(text='Here’s what I found in the SFBU sources:',entries=matches,status='answered')
     if os.environ.get('BAYLEY_WEBUI_API_KEY'):
@@ -305,5 +310,15 @@ def answer_question(question,entries,context,semantic=True,history=None):
             response['mode']+=' · '+os.environ.get('BAYLEY_MODEL','qwen3:8b')
         except Exception as exc:
             response['mode']+=' · source-note fallback';response['diagnostic']=type(exc).__name__
-    if response['status']=='answered':ctx['last_question']=query_input[-1500:]
+    if response['status']=='answered' and not calendar:
+        if not continued:ctx['last_question']=question[:1500]
+        contacts=[e['id'] for e in response['entries'] if e.get('contact_email')]
+        if contacts:
+            old=ctx.get('request_context',{})
+            problem=old.get('text',question) if continued else question
+            # Preserve a follow-up error detail, but not a request to contact the office.
+            if continued and re.search(r'\b(error|says|failed|fails|denied|tried)\b',question,re.I):
+                problem=problem+'\nAdditional detail: '+question
+            ctx['request_context']={'text':problem[:2000],'contact_ids':contacts}
+            response['draft_question']=problem[:2000]
     return response
