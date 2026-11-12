@@ -918,5 +918,147 @@
     "fact_key": "nonacademic-complaints",
     "fact_value": "SFBU’s Resources page lists compliance@sfbu.edu as the contact for Non-Academic Complaints.",
     "contact_email": "compliance@sfbu.edu"
+  },
+  {
+    "id": "guide-address",
+    "title": "Find campus",
+    "text": "Our address is 161 Mission Falls Ln, Fremont, CA 94539.",
+    "keywords": [],
+    "source_ids": [
+      "contact"
+    ],
+    "section": "Find campus",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-address",
+    "fact_value": "Our address is 161 Mission Falls Ln, Fremont, CA 94539.",
+    "topic": "onboarding",
+    "verification_kind": "official_public"
+  },
+  {
+    "id": "guide-buildings",
+    "title": "Know your buildings",
+    "text": "Campus has three buildings, with two mainly used by students. The Learning Resource Center (LRC) contains classrooms—most on the second floor—and computer labs on the first floor. The Student Success Hub is where you can find counselors and student support.",
+    "keywords": [],
+    "source_ids": [
+      "campus_notes",
+      "student_hub"
+    ],
+    "section": "Know your buildings",
+    "source_owner": "Project maintainer (user verification)",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-buildings",
+    "fact_value": "Campus has three buildings, with two mainly used by students. The Learning Resource Center (LRC) contains classrooms—most on the second floor—and computer labs on the first floor. The Student Success Hub is where you can find counselors and student support.",
+    "topic": "onboarding",
+    "verification_kind": "user_verified"
+  },
+  {
+    "id": "guide-break",
+    "title": "Take a midday break",
+    "text": "12–1 pm is a campus-wide break with no classes, giving you time for lunch and connecting with others.",
+    "keywords": [],
+    "source_ids": [
+      "campus_notes"
+    ],
+    "section": "Take a midday break",
+    "source_owner": "Project maintainer (user verification)",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-break",
+    "fact_value": "12–1 pm is a campus-wide break with no classes, giving you time for lunch and connecting with others.",
+    "topic": "onboarding",
+    "verification_kind": "user_verified"
+  },
+  {
+    "id": "guide-courses",
+    "title": "Check your courses",
+    "text": "Your first-semester courses are assigned by the school. Check your schedule with your counselor. From your second semester, check your enrollment date and registration instructions so you know when to choose your classes.",
+    "keywords": [],
+    "source_ids": [
+      "campus_notes"
+    ],
+    "section": "Check your courses",
+    "source_owner": "Project maintainer (user verification)",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-courses",
+    "fact_value": "Your first-semester courses are assigned by the school. Check your schedule with your counselor. From your second semester, check your enrollment date and registration instructions so you know when to choose your classes.",
+    "topic": "onboarding",
+    "verification_kind": "user_verified"
+  },
+  {
+    "id": "guide-orientation",
+    "title": "Catch up on orientation",
+    "text": "If you missed orientation, contact your enrollment counselor to find out what you need to catch up on. This guide does not replace orientation or waive requirements.",
+    "keywords": [],
+    "source_ids": [
+      "orientation"
+    ],
+    "section": "Catch up on orientation",
+    "source_owner": "SFBU Admissions",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-orientation",
+    "fact_value": "If you missed orientation, contact your enrollment counselor to find out what you need to catch up on. This guide does not replace orientation or waive requirements.",
+    "topic": "onboarding",
+    "verification_kind": "official_public"
+  },
+  {
+    "id": "guide-tasks",
+    "title": "Complete your student tasks",
+    "text": "Review the tasks in your Student Portal, including the required health documentation and TB screening requirements. Follow SFBU’s official instructions, and contact Wellness if you need help.",
+    "keywords": [],
+    "source_ids": [
+      "entrance_health"
+    ],
+    "section": "Complete your student tasks",
+    "source_owner": "SFBU Wellness",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-tasks",
+    "fact_value": "Review the tasks in your Student Portal, including the required health documentation and TB screening requirements. Follow SFBU’s official instructions, and contact Wellness if you need help.",
+    "topic": "onboarding",
+    "verification_kind": "official_public"
+  },
+  {
+    "id": "guide-it",
+    "title": "Having trouble with Canvas?",
+    "text": "Contact AskIT@sfbu.edu or use the official AskIT form. I can also help you prepare a message describing the problem.",
+    "keywords": [],
+    "source_ids": [
+      "contact",
+      "askit"
+    ],
+    "section": "Having trouble with Canvas?",
+    "source_owner": "SFBU",
+    "checked_on": "2026-11-12",
+    "program": "all",
+    "term": null,
+    "effective_from": null,
+    "effective_to": null,
+    "fact_key": "guide-it",
+    "fact_value": "Contact AskIT@sfbu.edu or use the official AskIT form. I can also help you prepare a message describing the problem.",
+    "topic": "onboarding",
+    "verification_kind": "official_public"
   }
 ]

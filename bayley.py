@@ -8,6 +8,7 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 from urllib.request import Request, urlopen
+from onboarding import guide_requested, guide_reply
 from conversation import (resolve_context, without_calendar, retrieval_question,
                           draft_requested, followup_question, has_topic, technical_request)
 
@@ -78,6 +79,8 @@ def retrieve(question,entries,context,semantic=True,today=None):
     term=(context.get('season','')+' '+context.get('year','')).strip().title()
     candidates=[]
     for e in entries:
+        # Onboarding notes are selected explicitly, not ranked for unrelated questions.
+        if e.get('topic') == 'onboarding': continue
         if calendar:
             if e.get('topic')!='calendar' or e.get('term')!=term or e.get('program')!=context.get('program'): continue
             if context.get('calendar_event') not in (None,'schedule',e.get('fact_key')): continue
@@ -259,6 +262,7 @@ def answer_question(question,entries,context,semantic=True,history=None):
         response.update(text=IDENTITY,context=without_calendar(ctx)); return response
     if kind=='thanks': response['text']='You’re welcome! What else can I help you find?'; return response
     if draft_requested(question): return request_reply(question,entries,ctx)
+    if guide_requested(question): return guide_reply(question, entries, ctx)
     if kind=='general':
         ctx=without_calendar(ctx)
         ctx.pop('request_context',None);ctx.pop('last_question',None)

@@ -36,13 +36,14 @@ def visible_answer(reply, sources):
     parts = [reply.get('text', '')]
     if not reply.get('paragraphs'):
         parts.extend(e['text'] for e in reply.get('entries', []))
+    if reply.get('closing'): parts.append(reply['closing'])
     if reply.get('status') == 'draft':
         for e in reply.get('entries', []):
             if e.get('contact_email'):
                 subject, body = draft(reply['draft_question'], e)
                 parts.append(f"Editable draft to {e['contact_email']}\nSubject: {subject}\n{body}")
     urls = sorted({sources[s]['url'] for e in reply.get('entries', [])
-                   for s in e.get('source_ids', []) if s in sources})
+                   for s in e.get('source_ids', []) if s in sources and sources[s].get('url')})
     return '\n\n'.join(filter(None, parts)), urls
 
 

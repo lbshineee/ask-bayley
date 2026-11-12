@@ -58,5 +58,32 @@
     "url": "https://www.sfbu.edu/learning-teaching/faculty/business",
     "checked_on": "2026-11-11",
     "owner": "SFBU"
+  },
+  "campus_notes": {
+    "title": "Campus guide · user-verified notes",
+    "url": null,
+    "checked_on": "2026-11-12",
+    "owner": "Project maintainer (user verification)",
+    "verification": "Campus details and registration guidance supplied and approved by the project maintainer on 2026-11-12; not independently verified as published policy."
+  },
+  "orientation": {
+    "title": "First Flight orientation · Fall 2026 reference",
+    "url": "https://www.sfbu.edu/admissions/first-flight-fall-2026-new-student-orientation",
+    "checked_on": "2026-11-12",
+    "owner": "SFBU Admissions",
+    "verification": "Official Fall 2026 page; used for the onboarding contact only, not future-term dates."
+  },
+  "student_hub": {
+    "title": "Student Success Hub",
+    "url": "https://www.sfbu.edu/student-life-support/student-success-hub",
+    "checked_on": "2026-11-12",
+    "owner": "SFBU Student Success"
+  },
+  "entrance_health": {
+    "title": "Entrance Health Requirements",
+    "url": "https://www.sfbu.edu/admissions/entrance-health",
+    "checked_on": "2026-11-12",
+    "owner": "SFBU Wellness",
+    "verification": "General reminder only. Consult Wellness for individual requirements and current submission instructions."
   }
 }
